@@ -1,4 +1,4 @@
-package com.askemkay.flutterwave.raid
+package com.askemkay.flutterwave.raid.activities
 
 import android.content.Context
 import android.content.Intent
@@ -13,7 +13,7 @@ import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
-import com.askemkay.flutterwave.raid.activities.LoginActivity
+import com.askemkay.flutterwave.raid.R
 import com.askemkay.flutterwave.raid.models.RecyclerViewClickListenerInterface
 import com.askemkay.flutterwave.raid.models.Story
 import com.askemkay.flutterwave.raid.models.StoryHolder

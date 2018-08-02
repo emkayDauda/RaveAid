@@ -8,11 +8,9 @@ import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 //import com.alc.askemkay.journalapp.R
-import com.askemkay.flutterwave.raid.MainActivity
 import com.askemkay.flutterwave.raid.R
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_sign_up.*
-import kotlinx.android.synthetic.main.app_bar_main.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.longToast
 

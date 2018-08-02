@@ -1,21 +1,16 @@
-package com.askemkay.flutterwave.raid
+package com.askemkay.flutterwave.raid.activities
 
 import android.content.DialogInterface
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.androidstudy.networkmanager.Tovuti
-import com.askemkay.flutterwave.raid.activities.LoginActivity
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.longToast
-import org.jetbrains.anko.toast
 import java.util.*
-import com.firebase.ui.auth.ErrorCodes
-import android.R.attr.data
 import android.app.Activity
-import android.util.Log
 import com.firebase.ui.auth.IdpResponse
 
 
