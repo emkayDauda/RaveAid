@@ -33,4 +33,5 @@
     <string name="sign_out">Sign Out</string>
     <string name="unidentified_user">Unidentified User</string>
     <string name="unidentified_email">Unidentified Email</string>
+    <string name="title_activity_add_story">AddStory</string>
 </resources>
