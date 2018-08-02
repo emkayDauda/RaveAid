@@ -25,7 +25,10 @@ import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import org.jetbrains.anko.alert
@@ -143,7 +146,7 @@ RecyclerViewClickListenerInterface{
                 holder.timeStamp.text = model.timestamp
                 holder.uploadedBy.text = model.uploadedBy
                 holder.pushValue.text = model.suid
-                holder.title.text
+                holder.title.text = model.title
 
                 Log.e("Bind", "${model.category}: ${model.suid}")
             }
@@ -188,11 +191,15 @@ RecyclerViewClickListenerInterface{
     }
 
     private fun setUserDetailsInNav() {
-        userDisplayName.text = mAuth.currentUser?.displayName ?: context.getString(R.string.unidentified_user)
-        userEmail.text = mAuth.currentUser?.email ?: context.getString(R.string.unidentified_email)
+        val userName = mAuth.currentUser?.displayName
+        val userMail = mAuth.currentUser?.email
+        userDisplayName.text = userName ?: context.getString(R.string.unidentified_user)
+        userEmail.text = userMail ?: context.getString(R.string.unidentified_email)
 
         preferences.edit().putString(USER_NAME, mAuth.currentUser?.displayName).apply()
         preferences.edit().putString(USER_EMAIL, mAuth.currentUser?.email).apply()
+
+        checkRegeisteredEmails(userMail?.filter { it != '.' })
 
         val photoUrl = mAuth.currentUser?.photoUrl
 
@@ -271,5 +278,39 @@ RecyclerViewClickListenerInterface{
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private fun checkRegeisteredEmails(email: String?){
+        if (email != null) {
+            FirebaseDatabase.getInstance().reference
+                    .child("allEmails")
+                    .child(email)
+                    .addListenerForSingleValueEvent(object: ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) {
+                            toast("A transaction was cancelled...").show()
+                        }
+
+                        override fun onDataChange(p0: DataSnapshot) {
+                            val userActive = p0.getValue(String::class.java)
+                            if (userActive == null){
+                                bestowFreebiesUponUser(email)
+                            } else {
+
+                            }
+                        }
+                    })
+        }
+    }
+
+    private fun bestowFreebiesUponUser(email: String) {
+        FirebaseDatabase.getInstance().reference
+                .child("users")
+                .child(email)
+                .child("subscriptions")
+                .setValue(2)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) toast("Congratulations, you have been given two free stories...")
+                    else bestowFreebiesUponUser(email)
+                }
     }
 }
