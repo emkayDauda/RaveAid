@@ -25,13 +25,12 @@ import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.cancelButton
+import org.jetbrains.anko.noButton
 import org.jetbrains.anko.toast
 
 
@@ -39,19 +38,100 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 RecyclerViewClickListenerInterface{
 
     companion object {
-        val PREFERENCE_NAME = "raid"
-        val USER_NAME = "user_display_name"
-        val USER_EMAIL = "user_email"
+        const val PREFERENCE_NAME = "raid"
+        const val USER_NAME = "user_display_name"
+        const val USER_EMAIL = "user_email"
 
     }
     override fun onClick(v: View, position: Int) {
+        val sUid = v.findViewById<TextView>(R.id.pushValue).text.toString()
+        val sOwner = v.findViewById<TextView>(R.id.uploaded_by).text.toString()
+        val email = userEmail.text.toString().filter { it != '.' }
 
-        toast(v.findViewById<TextView>(R.id.pushValue).text.toString()).show()
+        /*Check if story has been purchased by user. If not, purchase it...*/
+        rootRef.child("users").child(email).child("storiesBought").child(sUid)
+                .addListenerForSingleValueEvent(object: ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
+                        toast("A transaction was cancelled...").show()
+                    }
+
+                    override fun onDataChange(p0: DataSnapshot) {
+                        val exists = p0.getValue(String::class.java)
+                        if (exists != null){
+                            rootRef.child("general").child("stories").child(sUid)
+                                    .addListenerForSingleValueEvent(object: ValueEventListener {
+                                        override fun onCancelled(p0: DatabaseError) {
+                                            toast("")
+                                        }
+
+                                        override fun onDataChange(p0: DataSnapshot) {
+                                            val story = p0.getValue(Story::class.java)
+                                            if (story != null) {
+                                                alert {
+                                                    title = story.title
+                                                    message = story.excerpt
+                                                }.show()
+                                            }
+                                        }
+                                    })
+                            alert {
+
+                            }
+                        } else{
+                            alert {
+                                title = "Make a purchase?"
+                                message = "Do you want to buy this story written by $sOwner?"
+
+                                positiveButton("OK"){
+                                    chargeSubscriptions(email, sUid)
+                                }
+
+                                noButton {}
+                            }.show()
+
+                        }
+                    }
+                })
+    }
+
+    fun chargeSubscriptions(email: String, sUid: String){
+        val currentSub = preferences.getString(Subscriptions.USER_STORIES_LEFT, "")
+
+        if (currentSub.isNotEmpty()) {
+            val currentSubValue = currentSub.toInt()
+            if (currentSubValue > 0){
+                rootRef.child("users").child(email).child("storiesBought")
+                        .child(sUid)
+                        .setValue("purchased")
+                        .addOnCompleteListener {
+                            if(it.isSuccessful){
+                                preferences.edit().putString(Subscriptions.USER_STORIES_LEFT,
+                                        (currentSubValue - 1).toString()).apply()
+
+                                rootRef.child("users")
+                                        .child(email)
+                                        .child("subscriptions")
+                                        .setValue((currentSubValue - 1).toString())
+                            }
+                        }
+            } else{
+                alert {
+                    title = "Oops"
+                    message = "You don't have an active subscription, but we can fix that..."
+
+                    positiveButton("Buy Now"){
+                        startActivity(Intent(this@MainActivity, Subscriptions::class.java))
+                    }
+                    cancelButton {}
+                }.show()
+            }
+        }
     }
 
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mGoogleApiClient: GoogleApiClient
     private lateinit var context: Context
+    private lateinit var rootRef: DatabaseReference
 
     private lateinit var userDisplayName: TextView
     private lateinit var userEmail: TextView
@@ -69,11 +149,15 @@ RecyclerViewClickListenerInterface{
         initComponents()
         setUserDetailsInNav()
 
-        populateRecyclerView("")
+        /*Get Current Subscriptions*/
+
+        populateRecyclerView("stories")
 
         fab.setOnClickListener {
             startActivity(Intent(this@MainActivity, AddStory::class.java))
         }
+
+        saveCurrentSub(preferences.getString(USER_EMAIL, ""))
     }
 
     private fun initComponents() {
@@ -87,6 +171,8 @@ RecyclerViewClickListenerInterface{
         nav_view.setNavigationItemSelectedListener(this)
 
         preferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
+
+        rootRef = FirebaseDatabase.getInstance().reference
 
         mAuth = FirebaseAuth.getInstance()
 
@@ -116,11 +202,11 @@ RecyclerViewClickListenerInterface{
         imageView = headerView.findViewById(R.id.imageView)
     }
 
-    private fun populateRecyclerView(collectionName: String){
+    private fun populateRecyclerView(category: String){
 
-        val realQuery = FirebaseDatabase.getInstance().reference
+        val realQuery = rootRef
                 .child("general")
-                .child("stories")
+                .child(category)
                 .limitToLast(50)
 
 //        val options = FirestoreRecyclerOptions.Builder<Story>()
@@ -156,8 +242,6 @@ RecyclerViewClickListenerInterface{
                 realAdapter.notifyDataSetChanged()
             }
 
-
-
         }
 
 
@@ -166,18 +250,6 @@ RecyclerViewClickListenerInterface{
         realAdapter.notifyDataSetChanged()
         storiesList.adapter = realAdapter
 
-//        val story = Story(
-//                length = "A length",
-//                excerpt = "An Excerpt",
-//                category = "A Category",
-//                uploadedBy = userDisplayName.text.toString()
-//        )
-//        FirebaseDatabase.getInstance().getReference("stories").child(story.suid.toString())
-//                .setValue(story).addOnCompleteListener {
-//                    if(!it.isSuccessful) {
-//                        longToast("Failed to Add Story\n${it.exception?.message}").show()
-//                    }
-//                }
     }
 
     override fun onStart() {
@@ -199,7 +271,7 @@ RecyclerViewClickListenerInterface{
         preferences.edit().putString(USER_NAME, mAuth.currentUser?.displayName).apply()
         preferences.edit().putString(USER_EMAIL, mAuth.currentUser?.email).apply()
 
-        checkRegeisteredEmails(userMail?.filter { it != '.' })
+        checkRegisteredEmails(userMail?.filter { it != '.' })
 
         val photoUrl = mAuth.currentUser?.photoUrl
 
@@ -228,7 +300,16 @@ RecyclerViewClickListenerInterface{
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_settings -> return true
+            R.id.view_stories -> {
+                populateRecyclerView("stories")
+                return true
+            }
+
+            R.id.view_poems -> {
+                populateRecyclerView("poems")
+                realAdapter.notifyDataSetChanged()
+                return true
+            }
             else -> return super.onOptionsItemSelected(item)
         }
     }
@@ -280,9 +361,9 @@ RecyclerViewClickListenerInterface{
         return true
     }
 
-    private fun checkRegeisteredEmails(email: String?){
+    private fun checkRegisteredEmails(email: String?){
         if (email != null) {
-            FirebaseDatabase.getInstance().reference
+            rootRef
                     .child("allEmails")
                     .child(email)
                     .addListenerForSingleValueEvent(object: ValueEventListener {
@@ -303,14 +384,43 @@ RecyclerViewClickListenerInterface{
     }
 
     private fun bestowFreebiesUponUser(email: String) {
-        FirebaseDatabase.getInstance().reference
+        rootRef
                 .child("users")
                 .child(email)
                 .child("subscriptions")
                 .setValue(2)
                 .addOnCompleteListener {
-                    if (it.isSuccessful) toast("Congratulations, you have been given two free stories...")
+                    if (it.isSuccessful) {
+                        rootRef
+                                .child("allEmails")
+                                .child(email)
+                                .setValue("Active")
+                                .addOnCompleteListener {
+                                    if (it.isSuccessful) {
+                                        toast("Congratulations, you have been given two free stories...")
+                                    }
+
+                                }
+                    }
                     else bestowFreebiesUponUser(email)
                 }
+    }
+
+    fun saveCurrentSub(emailForFirebase: String){
+        FirebaseDatabase.getInstance().reference
+                .child("users")
+                .child(emailForFirebase.filter { it != '.' })
+                .child("subscriptions").ref.addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                toast("Cancelled an operation...")
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val value = p0.value.toString()
+//                toast("Data changed: ${p0.getValue(Int::class.java)}")
+                getSharedPreferences(MainActivity.PREFERENCE_NAME, Context.MODE_PRIVATE)
+                        .edit().putString(Subscriptions.USER_STORIES_LEFT, value).commit()
+            }
+        })
     }
 }

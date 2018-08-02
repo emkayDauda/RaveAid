@@ -98,7 +98,7 @@ class AddStory : AppCompatActivity() {
         storyText = findViewById(R.id.new_entry_edit_text)
         categorySpinner = findViewById(R.id.categorySpinner)
         topic = findViewById(R.id.topic)
-        title = findViewById(R.id.title)
+        title = findViewById(R.id.story_title)
         topic.gravity = Gravity.CENTER
 
         categorySpinner.gravity = Gravity.CENTER

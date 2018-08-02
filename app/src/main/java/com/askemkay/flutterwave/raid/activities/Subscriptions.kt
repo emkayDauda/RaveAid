@@ -4,18 +4,13 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import com.askemkay.flutterwave.raid.R
 import com.flutterwave.raveandroid.RavePayManager
 
 import kotlinx.android.synthetic.main.activity_subscriptions.*
-import org.jetbrains.anko.AlertBuilder
 import org.jetbrains.anko.alert
 import java.util.*
-import android.R.attr.data
-import android.support.constraint.ConstraintLayout
 import android.view.View
 import android.widget.*
 import com.flutterwave.raveandroid.RavePayActivity
@@ -34,6 +29,7 @@ class Subscriptions : AppCompatActivity() {
     }
 
     private lateinit var subscribeButton: Button
+    private lateinit var flutterWaver: Button
     private lateinit var subscriptionSpinner: Spinner
     private lateinit var priceTextView: TextView
     private lateinit var confirmPayAlert: DialogInterface
@@ -51,13 +47,14 @@ selected
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         initComponents()
-        savecurrentSub()
+        saveCurrentSub()
     }
 
     private fun initComponents(){
         subscribeButton = findViewById(R.id.subscribe)
         subscriptionSpinner = findViewById(R.id.subscriptionsSpinner)
         priceTextView = findViewById(R.id.price_text_view)
+        flutterWaver = findViewById(R.id.flutterwaver)
 
         val priceAdapter = ArrayAdapter.createFromResource(this@Subscriptions,
                 R.array.subscriptions, android.R.layout.simple_spinner_dropdown_item)
@@ -130,6 +127,37 @@ selected
             }.show()
         }
 
+        flutterWaver.setOnClickListener{
+            alert {
+                message = "You will be billed 100 Naira"
+                title = "Confirm"
+
+                positiveButton("OK"){
+                    selected = "One"
+                    val debitAmount = price.split("[ ]+".toRegex())[0].toDouble()
+
+                    val names = name.split("[ ]+".toRegex())
+                    val raver = RavePayManager(this@Subscriptions).setAmount(150.0)
+                            .setCountry("NG")
+                            .setCurrency("NGN")
+                            .setEmail(email)
+                            .setfName(names.first())
+                            .setlName(names.last())
+                            .setNarration("RAid Charge for stories purchase(Qty: 1)")
+                            .setPublicKey("FLWPUBK-af81b89256369f5e27cba8d48b2d43d8-X")
+                            .setSecretKey("FLWSECK-07dc3355f89056b125fad900cf942be6-X")
+                            .setTxRef((Random().nextInt(9999) + 10000).toString())
+                            .acceptAccountPayments(true)
+                            .acceptCardPayments(true)
+                            .acceptMpesaPayments(false)
+                            .acceptGHMobileMoneyPayments(false)
+                            .onStagingEnv(false)
+//                            .withTheme(styleId)
+                            .initialize()
+                }
+            }.show()
+        }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -158,7 +186,7 @@ selected
                                     .child("subscriptions").setValue(newSub).addOnCompleteListener {
                                         if (it.isSuccessful) {
                                             toast("Subscription added to your account").show()
-                                            savecurrentSub()
+                                            saveCurrentSub()
                                         }
                                         else{
                                             toast("Failed: ${it.exception?.message}").show()
@@ -178,7 +206,7 @@ selected
         }
     }
 
-    private fun savecurrentSub(){
+    fun saveCurrentSub(){
         FirebaseDatabase.getInstance().reference
                 .child("users")
                 .child(emailForFirebase)
@@ -189,7 +217,7 @@ selected
 
             override fun onDataChange(p0: DataSnapshot) {
                 val value = p0.value.toString()
-                toast("Data changed: ${p0.getValue(Int::class.java)}")
+//                toast("Data changed: ${p0.getValue(Int::class.java)}")
                 getSharedPreferences(MainActivity.PREFERENCE_NAME, Context.MODE_PRIVATE)
                         .edit().putString(USER_STORIES_LEFT, value).commit()
             }
