@@ -28,6 +28,8 @@ To get a local copy of the project, follow these steps:
     3. Follow the instructions in both cases.
     4. Clean and rebuild project just to be safe.
     
+**Note**: A sample release apk can be found [here](https://docs.google.com/uc?export=download&id=1h4lGuEazZk9cpdIxNI5dL6v7XxYrkKdO)
+    
 #Built With
 * [Android Support Library](https://developer.android.com/topic/libraries/support-library/revisions) - Support Library 27
 * [Firebase](https://firebase.google.com/) - Authentication and data persistence.
