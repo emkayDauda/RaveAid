@@ -22,6 +22,7 @@ class AddStory : AppCompatActivity() {
 
     private lateinit var storyText: EditText
     private lateinit var categorySpinner: Spinner
+    private lateinit var title: EditText
     private lateinit var topic: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +39,7 @@ class AddStory : AppCompatActivity() {
         val storyBody = storyText.text.toString()
         val category = categorySpinner.selectedItem.toString()
         val topic = topic.text.toString()
+        val storyTitle = title.text.toString()
 
         val currentDate = SimpleDateFormat("EEE, MMM d, ''yy", Locale.ENGLISH)
                 .format(Calendar.getInstance().time)
@@ -54,6 +56,7 @@ class AddStory : AppCompatActivity() {
 
             val story = Story(
                     excerpt = storyBody,
+                    title = storyTitle,
                     length = if (length < 1.0) "<1 minute" else "$length minutes",
                     category = category,
                     uploadedBy = userName,
@@ -95,6 +98,7 @@ class AddStory : AppCompatActivity() {
         storyText = findViewById(R.id.new_entry_edit_text)
         categorySpinner = findViewById(R.id.categorySpinner)
         topic = findViewById(R.id.topic)
+        title = findViewById(R.id.title)
         topic.gravity = Gravity.CENTER
 
         categorySpinner.gravity = Gravity.CENTER

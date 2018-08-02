@@ -20,6 +20,7 @@ class StoryHolder(v: View, listener: RecyclerViewClickListenerInterface): Recycl
     val category: TextView = v.findViewById(R.id.category)
     val uploadedBy: TextView = v.findViewById(R.id.uploaded_by)
     val pushValue:TextView = v.findViewById(R.id.pushValue)
+    val title: TextView = v.findViewById(R.id.title)
 
     init {
         v.setOnClickListener(this)

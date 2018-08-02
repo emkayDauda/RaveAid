@@ -12,6 +12,10 @@
             android:id="@+id/view_accounts"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/view_accounts" />
+        <item
+            android:id="@+id/subscriptions"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/subscribe"/>
     </group>
 
     <item android:title="">

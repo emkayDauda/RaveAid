@@ -49,14 +49,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:maxLines="4"
                 android:text="Excerpt"
                 app:layout_constraintEnd_toEndOf="@+id/length"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/date"
-                app:layout_constraintTop_toBottomOf="@+id/date" />
+                app:layout_constraintTop_toBottomOf="@+id/title" />
 
             <TextView
                 android:id="@+id/category"
@@ -87,6 +87,18 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/uploaded_by"
                 app:layout_constraintStart_toEndOf="@+id/category" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:gravity="center"
+                android:text="A title"
+                app:layout_constraintEnd_toStartOf="@+id/length"
+                app:layout_constraintStart_toEndOf="@+id/date"
+                app:layout_constraintTop_toBottomOf="@+id/date" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 </android.support.constraint.ConstraintLayout>

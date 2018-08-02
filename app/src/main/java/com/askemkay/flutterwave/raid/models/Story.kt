@@ -11,14 +11,15 @@ data class Story(
         val length: String,
         val excerpt: String,
         val category: String,
+        val title: String,
         val uploadedBy: String,
         val timestamp: String = SimpleDateFormat("EEE, MMM d, ''yy", Locale.ENGLISH)
                 .format(Calendar.getInstance().time)
 ){
     //Empty Constructor required for firebase
-    constructor():this(length = "", excerpt = "", category = "" ,uploadedBy = "", timestamp = "")
+    constructor():this(length = "", excerpt = "", category = "" , title = "", uploadedBy = "", timestamp = "")
 
-    constructor(excerpt: String, uploadedBy: String, timestamp: String?) : this()
+//    constructor(excerpt: String, uploadedBy: String, timestamp: String?) : this()
 
 
 }

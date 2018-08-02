@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,9 +15,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:background="@null"
-        android:gravity="top|start"
+        android:gravity="center"
+        android:hint="Start your awesome story..."
         android:inputType="textMultiLine"
         android:lines="6"
         android:overScrollMode="always"
@@ -25,39 +26,57 @@
         android:scrollbars="vertical"
         android:textAppearance="?android:attr/textAppearanceMedium"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout4" />
 
     <TextView
-        app:layout_constraintTop_toBottomOf="@id/new_entry_edit_text"
-        app:layout_constraintLeft_toLeftOf="@id/new_entry_edit_text"
-        android:layout_width="wrap_content"
         android:id="@+id/category_text_view"
-        android:layout_marginTop="12dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/category"/>
+        android:layout_marginTop="16dp"
+        android:text="@string/category"
+        app:layout_constraintLeft_toLeftOf="@id/new_entry_edit_text"
+        app:layout_constraintTop_toBottomOf="@id/new_entry_edit_text" />
 
     <Spinner
         android:id="@+id/categorySpinner"
-        android:gravity="center"
-        app:layout_constraintLeft_toRightOf="@id/category_text_view"
-        app:layout_constraintBaseline_toBaselineOf="@id/category_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="99dp"
-        tools:layout_editor_absoluteY="144dp"/>
+        android:layout_marginStart="8dp"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@+id/category_text_view"
+        app:layout_constraintTop_toTopOf="@+id/category_text_view" />
 
     <EditText
         android:id="@+id/topic"
         android:layout_width="71dp"
         android:layout_height="38dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView2"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/new_entry_edit_text" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="5dp">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/story_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="3dp"
+            android:layout_marginEnd="2dp"
+            android:gravity="center"
+            android:hint="a catchy title" />
+    </android.support.design.widget.TextInputLayout>
 
     <TextView
         android:id="@+id/textView2"
@@ -65,7 +84,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="Topic (Optional)"
-        app:layout_constraintBaseline_toBaselineOf="@+id/topic"
+        app:layout_constraintBaseline_toBaselineOf="@+id/category_text_view"
         app:layout_constraintEnd_toStartOf="@+id/topic" />
 
 </android.support.constraint.ConstraintLayout>

@@ -35,10 +35,28 @@
     <string name="unidentified_email">Unidentified Email</string>
     <string name="title_activity_add_story">AddStory</string>
     <string name="category">Category</string>
-    <string name="error_unidentified_user">It seems you have not been identified...</string>
+    <string name="error_unidentified_user">It seems you have not been identified…</string>
 
     <string-array name="categories">
         <item>Story</item>
         <item>Poem</item>
     </string-array>
+
+    <string-array name="subscriptions">
+        <item>One</item>
+        <item>Three</item>
+        <item>Five</item>
+        <item>Ten</item>
+    </string-array>
+
+    <string name="title_activity_subscriptions">Subscriptions</string>
+    <string name="stories_are_unique_and_worth_a_million_pounds">A unique story is worth a million pounds…</string>
+    <string name="but_we_re_nice_at_raid_and_will_only_charge_you_a_few_bucks">but we\'re nice at RAid and will only charge you a few bucks…</string>
+    <string name="get">Get</string>
+    <string name="base_price">150 Naira</string>
+    <string name="subscribe">Subscribe</string>
+    <string name="price_of_one">500 Naira</string>
+    <string name="price_of_three">1200 Naira</string>
+    <string name="price_of_five">2000 Naira</string>
+    <string name="price_of_ten">4000 Naira</string>
 </resources>

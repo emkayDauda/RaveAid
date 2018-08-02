@@ -18,20 +18,18 @@ import com.askemkay.flutterwave.raid.R
 import com.askemkay.flutterwave.raid.models.RecyclerViewClickListenerInterface
 import com.askemkay.flutterwave.raid.models.Story
 import com.askemkay.flutterwave.raid.models.StoryHolder
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import org.jetbrains.anko.alert
-import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.firebase.database.FirebaseDatabase
-import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
-import java.util.*
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
@@ -116,10 +114,6 @@ RecyclerViewClickListenerInterface{
     }
 
     private fun populateRecyclerView(collectionName: String){
-//        val query = FirebaseFirestore.getInstance()
-//                .collection(collectionName)
-//                .orderBy("timestamp")
-//                .limit(50)
 
         val realQuery = FirebaseDatabase.getInstance().reference
                 .child("general")
@@ -149,6 +143,8 @@ RecyclerViewClickListenerInterface{
                 holder.timeStamp.text = model.timestamp
                 holder.uploadedBy.text = model.uploadedBy
                 holder.pushValue.text = model.suid
+                holder.title.text
+
                 Log.e("Bind", "${model.category}: ${model.suid}")
             }
 
@@ -158,7 +154,7 @@ RecyclerViewClickListenerInterface{
             }
 
 
-//            override fun getItemCount() = realAdapter.itemCount
+
         }
 
 
@@ -238,6 +234,10 @@ RecyclerViewClickListenerInterface{
             }
             R.id.view_accounts -> {
 
+            }
+
+            R.id.subscriptions -> {
+                startActivity(Intent(this@MainActivity, Subscriptions::class.java))
             }
 
             R.id.sign_out -> {

@@ -46,7 +46,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.1'
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
 
-    implementation 'com.github.Flutterwave:rave-android:1.0.25'
+    compile 'com.github.Flutterwave:rave-android:1.0.27'
 
     implementation 'com.firebaseui:firebase-ui-auth:4.1.0'
     implementation "com.firebaseui:firebase-ui-firestore:4.1.0"
