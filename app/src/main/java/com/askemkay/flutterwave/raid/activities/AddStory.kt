@@ -1,24 +1,109 @@
 package com.askemkay.flutterwave.raid.activities
 
+import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.view.Gravity
+import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.Spinner
 import com.askemkay.flutterwave.raid.R
+import com.askemkay.flutterwave.raid.models.Story
+import com.google.firebase.database.FirebaseDatabase
 
 import kotlinx.android.synthetic.main.activity_add_story.*
+import org.jetbrains.anko.longToast
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AddStory : AppCompatActivity() {
+
+    private lateinit var storyText: EditText
+    private lateinit var categorySpinner: Spinner
+    private lateinit var topic: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_story)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
+        initComponents()
+        fab.setOnClickListener { view -> addStory(view) }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun addStory(view: View) {
+        val storyBody = storyText.text.toString()
+        val category = categorySpinner.selectedItem.toString()
+        val topic = topic.text.toString()
+
+        val currentDate = SimpleDateFormat("EEE, MMM d, ''yy", Locale.ENGLISH)
+                .format(Calendar.getInstance().time)
+
+        if (storyBody.isNotEmpty()) {
+            var length = 0.0
+            //for each word, assume a reading time of 0.01 minutes (0.6 seconds)
+            storyBody.split("[ ]+".toRegex()).forEach { length += 0.01 }
+            val userEmail = getSharedPreferences(MainActivity.PREFERENCE_NAME, Context.MODE_PRIVATE)
+                    .getString(MainActivity.USER_EMAIL, "")
+
+            val userName = getSharedPreferences(MainActivity.PREFERENCE_NAME, Context.MODE_PRIVATE)
+                    .getString(MainActivity.USER_NAME, "")
+
+            val story = Story(
+                    excerpt = storyBody,
+                    length = if (length < 1.0) "<1 minute" else "$length minutes",
+                    category = category,
+                    uploadedBy = userName,
+                    timestamp = currentDate
+            )
+
+
+            //Remove punctuation before using as firebase reference.
+            val userEmailForFirebase = userEmail.filter { it != '.' }
+            if (userEmail.isNotEmpty()){
+                FirebaseDatabase.getInstance().reference
+                        .child("general")
+                        .child(if (story.category == "Poem") "poems" else "stories")
+                        .child(story.suid).setValue(story)
+
+                FirebaseDatabase.getInstance().reference
+                        .child("users")
+                        .child(userEmailForFirebase)
+                        .child(if (story.category == "Poem") "poems" else "stories")
+                        .child(story.suid)
+                        .setValue(story)
+                        .addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                Snackbar.make(view, "Story Added", Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show()
+                            } else {
+                                Snackbar.make(view, "Failed...", Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show()
+                            }
+                        }
+            } else {
+                longToast(getString(R.string.error_unidentified_user))
+            }
+        }
+
+    }
+
+    private fun initComponents() {
+        storyText = findViewById(R.id.new_entry_edit_text)
+        categorySpinner = findViewById(R.id.categorySpinner)
+        topic = findViewById(R.id.topic)
+        topic.gravity = Gravity.CENTER
+
+        categorySpinner.gravity = Gravity.CENTER
+
+        val categoryAdapter = ArrayAdapter.createFromResource(this@AddStory,
+                R.array.categories, android.R.layout.simple_spinner_item)
+
+        categorySpinner.adapter = categoryAdapter
+        categorySpinner.setSelection(0)
     }
 
 }

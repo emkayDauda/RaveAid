@@ -7,7 +7,7 @@ import java.util.*
 // Created by ask_emkay on 8/1/18.
 @Keep
 data class Story(
-        val suid: String,
+        val suid: String = Random().nextInt().toString(),
         val length: String,
         val excerpt: String,
         val category: String,
@@ -16,7 +16,9 @@ data class Story(
                 .format(Calendar.getInstance().time)
 ){
     //Empty Constructor required for firebase
-    constructor():this(suid = "",length = "", excerpt = "", category = "" ,uploadedBy = "", timestamp = "")
+    constructor():this(length = "", excerpt = "", category = "" ,uploadedBy = "", timestamp = "")
+
+    constructor(excerpt: String, uploadedBy: String, timestamp: String?) : this()
 
 
 }

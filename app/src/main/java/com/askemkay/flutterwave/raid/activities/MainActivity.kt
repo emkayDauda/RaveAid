@@ -2,6 +2,7 @@ package com.askemkay.flutterwave.raid.activities
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -35,6 +36,13 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
 RecyclerViewClickListenerInterface{
+
+    companion object {
+        val PREFERENCE_NAME = "raid"
+        val USER_NAME = "user_display_name"
+        val USER_EMAIL = "user_email"
+
+    }
     override fun onClick(v: View, position: Int) {
 
         toast(v.findViewById<TextView>(R.id.pushValue).text.toString()).show()
@@ -50,6 +58,7 @@ RecyclerViewClickListenerInterface{
     private lateinit var storiesList: RecyclerView
     private lateinit var realAdapter: FirebaseRecyclerAdapter<Story, StoryHolder>
     private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var preferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +69,10 @@ RecyclerViewClickListenerInterface{
         setUserDetailsInNav()
 
         populateRecyclerView("")
+
+        fab.setOnClickListener {
+            startActivity(Intent(this@MainActivity, AddStory::class.java))
+        }
     }
 
     private fun initComponents() {
@@ -71,6 +84,8 @@ RecyclerViewClickListenerInterface{
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+
+        preferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
 
         mAuth = FirebaseAuth.getInstance()
 
@@ -107,6 +122,7 @@ RecyclerViewClickListenerInterface{
 //                .limit(50)
 
         val realQuery = FirebaseDatabase.getInstance().reference
+                .child("general")
                 .child("stories")
                 .limitToLast(50)
 
@@ -151,19 +167,18 @@ RecyclerViewClickListenerInterface{
         realAdapter.notifyDataSetChanged()
         storiesList.adapter = realAdapter
 
-        val story = Story(
-                suid = Random().nextInt().toString(),
-                length = "A length",
-                excerpt = "An Excerpt",
-                category = "A Category",
-                uploadedBy = userDisplayName.text.toString()
-        )
-        FirebaseDatabase.getInstance().getReference("stories").child(story.suid.toString())
-                .setValue(story).addOnCompleteListener {
-                    if(!it.isSuccessful) {
-                        longToast("Failed to Add Story\n${it.exception?.message}").show()
-                    }
-                }
+//        val story = Story(
+//                length = "A length",
+//                excerpt = "An Excerpt",
+//                category = "A Category",
+//                uploadedBy = userDisplayName.text.toString()
+//        )
+//        FirebaseDatabase.getInstance().getReference("stories").child(story.suid.toString())
+//                .setValue(story).addOnCompleteListener {
+//                    if(!it.isSuccessful) {
+//                        longToast("Failed to Add Story\n${it.exception?.message}").show()
+//                    }
+//                }
     }
 
     override fun onStart() {
@@ -179,6 +194,9 @@ RecyclerViewClickListenerInterface{
     private fun setUserDetailsInNav() {
         userDisplayName.text = mAuth.currentUser?.displayName ?: context.getString(R.string.unidentified_user)
         userEmail.text = mAuth.currentUser?.email ?: context.getString(R.string.unidentified_email)
+
+        preferences.edit().putString(USER_NAME, mAuth.currentUser?.displayName).apply()
+        preferences.edit().putString(USER_EMAIL, mAuth.currentUser?.email).apply()
 
         val photoUrl = mAuth.currentUser?.photoUrl
 

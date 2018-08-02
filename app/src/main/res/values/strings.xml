@@ -34,4 +34,11 @@
     <string name="unidentified_user">Unidentified User</string>
     <string name="unidentified_email">Unidentified Email</string>
     <string name="title_activity_add_story">AddStory</string>
+    <string name="category">Category</string>
+    <string name="error_unidentified_user">It seems you have not been identified...</string>
+
+    <string-array name="categories">
+        <item>Story</item>
+        <item>Poem</item>
+    </string-array>
 </resources>
