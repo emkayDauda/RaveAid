@@ -38,6 +38,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildTypes.each {
+        it.buildConfigField 'String', 'RavePublicKey', RavePublicKey
+        it.buildConfigField 'String', 'RavePrivateKey', RavePrivateKey
+    }
+
     productFlavors {
     }
 }
