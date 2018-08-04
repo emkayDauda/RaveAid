@@ -13,6 +13,7 @@ import org.jetbrains.anko.alert
 import java.util.*
 import android.view.View
 import android.widget.*
+import com.askemkay.flutterwave.raid.BuildConfig
 import com.flutterwave.raveandroid.RavePayActivity
 import com.flutterwave.raveandroid.RaveConstants
 import com.google.firebase.database.DataSnapshot
@@ -110,14 +111,14 @@ selected
                             .setfName(names.first())
                             .setlName(names.last())
                             .setNarration("RAid Charge for stories purchase(Qty: $selected)")
-                            .setPublicKey("FLWPUBK-205ee6547a9929d31f98529ca4f61b66-X")
-                            .setSecretKey("FLWSECK-394293d71e229e59b0398836ff5b1124-X")
+                            .setPublicKey(BuildConfig.RavePublicKey)
+                            .setSecretKey(BuildConfig.RavePrivateKey)
                             .setTxRef((Random().nextInt(9999) + 10000).toString())
                             .acceptAccountPayments(true)
                             .acceptCardPayments(true)
                             .acceptMpesaPayments(false)
                             .acceptGHMobileMoneyPayments(false)
-                            .onStagingEnv(true)
+                            .onStagingEnv(false)
 //                            .withTheme(styleId)
                             .initialize()
                 }
@@ -144,14 +145,15 @@ selected
                             .setfName(names.first())
                             .setlName(names.last())
                             .setNarration("RAid Charge for stories purchase(Qty: 1)")
-                            .setPublicKey("FLWPUBK-af81b89256369f5e27cba8d48b2d43d8-X")
-                            .setSecretKey("FLWSECK-07dc3355f89056b125fad900cf942be6-X")
+                            .setPublicKey(BuildConfig.RavePublicKey)
+                            .setSecretKey(BuildConfig.RavePrivateKey)
                             .setTxRef((Random().nextInt(9999) + 10000).toString())
                             .acceptAccountPayments(true)
                             .acceptCardPayments(true)
                             .acceptMpesaPayments(false)
                             .acceptGHMobileMoneyPayments(false)
                             .onStagingEnv(false)
+
 //                            .withTheme(styleId)
                             .initialize()
                 }

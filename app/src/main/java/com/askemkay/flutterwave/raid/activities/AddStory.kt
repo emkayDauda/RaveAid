@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Spinner
 import com.askemkay.flutterwave.raid.R
 import com.askemkay.flutterwave.raid.models.Story
@@ -16,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase
 
 import kotlinx.android.synthetic.main.activity_add_story.*
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.toast
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
@@ -27,6 +29,7 @@ class AddStory : AppCompatActivity() {
     private lateinit var title: EditText
     private lateinit var topic: EditText
     private lateinit var rootRef: DatabaseReference
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +42,7 @@ class AddStory : AppCompatActivity() {
     }
 
     private fun addStory(view: View) {
+        progressBar.visibility = View.VISIBLE
         val storyBody = storyText.text.toString()
         val category = categorySpinner.selectedItem.toString()
         val topic = topic.text.toString()
@@ -66,6 +70,10 @@ class AddStory : AppCompatActivity() {
                     timestamp = currentDate
             )
 
+            storyText.setText("")
+            title.setText("")
+
+
 
             //Remove punctuation before using as firebase reference.
             val userEmailForFirebase = userEmail.filter { it != '.' }
@@ -81,6 +89,7 @@ class AddStory : AppCompatActivity() {
                         .setValue(story)
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
+                                progressBar.visibility = View.GONE
                                 Snackbar.make(view, "Story Added", Snackbar.LENGTH_LONG)
                                         .setAction("Action", null).show()
                             } else {
@@ -97,6 +106,10 @@ class AddStory : AppCompatActivity() {
             } else {
                 longToast(getString(R.string.error_unidentified_user))
             }
+        } else {
+            progressBar.visibility = View.GONE
+            if (storyBody.isEmpty()) storyText.error = "Required"
+            if (storyTitle.isEmpty()) title.error = "Required"
         }
 
     }
@@ -106,6 +119,7 @@ class AddStory : AppCompatActivity() {
         categorySpinner = findViewById(R.id.categorySpinner)
         topic = findViewById(R.id.topic)
         title = findViewById(R.id.story_title)
+        progressBar = findViewById(R.id.addStoryProgressBar)
         topic.gravity = Gravity.CENTER
 
         categorySpinner.gravity = Gravity.CENTER

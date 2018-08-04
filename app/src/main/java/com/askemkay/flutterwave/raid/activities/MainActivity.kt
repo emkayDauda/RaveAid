@@ -28,10 +28,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.cancelButton
-import org.jetbrains.anko.noButton
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
@@ -119,6 +116,7 @@ RecyclerViewClickListenerInterface{
 
                                 //If user has tried to view a story before, show that story after successful charge
                                 if (showStory) showStory(sUid)
+                                longToast("Story purchased. You have${currentSubValue - 1} subscriptions left").show()
                             }
                         }
             } else{
@@ -443,7 +441,7 @@ RecyclerViewClickListenerInterface{
                                 .setValue("Active")
                                 .addOnCompleteListener {
                                     if (it.isSuccessful) {
-                                        toast("Congratulations, you have been given two free stories...")
+                                        longToast("Congratulations, you have been given two free stories...")
                                     }
 
                                 }
