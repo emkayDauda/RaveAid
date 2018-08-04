@@ -58,32 +58,14 @@ RecyclerViewClickListenerInterface{
                     override fun onDataChange(p0: DataSnapshot) {
                         val exists = p0.getValue(String::class.java)
                         if (exists != null){
-                            rootRef.child("general").child("stories").child(sUid)
-                                    .addListenerForSingleValueEvent(object: ValueEventListener {
-                                        override fun onCancelled(p0: DatabaseError) {
-                                            toast("")
-                                        }
-
-                                        override fun onDataChange(p0: DataSnapshot) {
-                                            val story = p0.getValue(Story::class.java)
-                                            if (story != null) {
-                                                alert {
-                                                    title = story.title
-                                                    message = story.excerpt
-                                                }.show()
-                                            }
-                                        }
-                                    })
-                            alert {
-
-                            }
+                            showStory(sUid)
                         } else{
                             alert {
                                 title = "Make a purchase?"
                                 message = "Do you want to buy this story written by $sOwner?"
 
                                 positiveButton("OK"){
-                                    chargeSubscriptions(email, sUid)
+                                    chargeSubscriptions(email, sUid, true)
                                 }
 
                                 noButton {}
@@ -94,7 +76,29 @@ RecyclerViewClickListenerInterface{
                 })
     }
 
-    fun chargeSubscriptions(email: String, sUid: String){
+    private fun showStory(sUid: String) {
+        rootRef.child("general").child("stories").child(sUid)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
+                        toast("")
+                    }
+
+                    override fun onDataChange(p0: DataSnapshot) {
+                        val story = p0.getValue(Story::class.java)
+                        if (story != null) {
+                            alert {
+                                title = story.title
+                                message = story.excerpt
+                            }.show()
+                        }
+                    }
+                })
+        alert {
+
+        }
+    }
+
+    fun chargeSubscriptions(email: String, sUid: String, showStory: Boolean = false){
         val currentSub = preferences.getString(Subscriptions.USER_STORIES_LEFT, "")
 
         if (currentSub.isNotEmpty()) {
@@ -112,6 +116,9 @@ RecyclerViewClickListenerInterface{
                                         .child(email)
                                         .child("subscriptions")
                                         .setValue((currentSubValue - 1).toString())
+
+                                //If user has tried to view a story before, show that story after successful charge
+                                if (showStory) showStory(sUid)
                             }
                         }
             } else{
@@ -124,6 +131,7 @@ RecyclerViewClickListenerInterface{
                     }
                     cancelButton {}
                 }.show()
+
             }
         }
     }
@@ -138,6 +146,7 @@ RecyclerViewClickListenerInterface{
     private lateinit var imageView: ImageView
     private lateinit var storiesList: RecyclerView
     private lateinit var realAdapter: FirebaseRecyclerAdapter<Story, StoryHolder>
+    private lateinit var poemsAdapter: FirebaseRecyclerAdapter<Story, StoryHolder>
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var preferences: SharedPreferences
 
@@ -204,10 +213,16 @@ RecyclerViewClickListenerInterface{
 
     private fun populateRecyclerView(category: String){
 
+        storiesList.adapter = null
         val realQuery = rootRef
                 .child("general")
                 .child(category)
-                .limitToLast(50)
+                .limitToLast(100)
+
+        val poemsQuery = rootRef
+                .child("general")
+                .child("poems")
+                .limitToLast(100)
 
 //        val options = FirestoreRecyclerOptions.Builder<Story>()
 //                .setQuery(query, Story::class.java)
@@ -217,8 +232,37 @@ RecyclerViewClickListenerInterface{
                 .setQuery(realQuery, Story::class.java)
                 .build()
 
+        val poemsOptions = FirebaseRecyclerOptions.Builder<Story>()
+                .setQuery(poemsQuery, Story::class.java)
+                .build()
+
 
         realAdapter = object: FirebaseRecyclerAdapter<Story, StoryHolder>(realOptions){
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoryHolder {
+                val view = LayoutInflater.from(context).inflate(R.layout.story_layout, parent, false)
+
+                return  StoryHolder(view, this@MainActivity)
+            }
+
+            override fun onBindViewHolder(holder: StoryHolder, position: Int, model: Story) {
+                holder.category.text = model.category
+                holder.excerpt.text = model.excerpt
+                holder.length.text = model.length
+                holder.timeStamp.text = model.timestamp
+                holder.uploadedBy.text = model.uploadedBy
+                holder.pushValue.text = model.suid
+                holder.title.text = model.title
+
+                Log.e("Bind", "${model.category}: ${model.suid}")
+            }
+
+            override fun onDataChanged() {
+                super.onDataChanged()
+                realAdapter.notifyDataSetChanged()
+            }
+
+        }
+        poemsAdapter = object: FirebaseRecyclerAdapter<Story, StoryHolder>(poemsOptions){
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoryHolder {
                 val view = LayoutInflater.from(context).inflate(R.layout.story_layout, parent, false)
 
@@ -255,11 +299,13 @@ RecyclerViewClickListenerInterface{
     override fun onStart() {
         super.onStart()
         realAdapter.startListening()
+        poemsAdapter.startListening()
     }
 
     override fun onStop() {
         super.onStop()
         realAdapter.stopListening()
+        poemsAdapter.stopListening()
     }
 
     private fun setUserDetailsInNav() {
@@ -301,12 +347,12 @@ RecyclerViewClickListenerInterface{
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.view_stories -> {
-                populateRecyclerView("stories")
+                storiesList.adapter = realAdapter
                 return true
             }
 
             R.id.view_poems -> {
-                populateRecyclerView("poems")
+                storiesList.adapter = poemsAdapter
                 realAdapter.notifyDataSetChanged()
                 return true
             }

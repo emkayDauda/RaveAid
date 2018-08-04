@@ -11,12 +11,14 @@ import android.widget.EditText
 import android.widget.Spinner
 import com.askemkay.flutterwave.raid.R
 import com.askemkay.flutterwave.raid.models.Story
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
 import kotlinx.android.synthetic.main.activity_add_story.*
 import org.jetbrains.anko.longToast
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 class AddStory : AppCompatActivity() {
 
@@ -24,6 +26,7 @@ class AddStory : AppCompatActivity() {
     private lateinit var categorySpinner: Spinner
     private lateinit var title: EditText
     private lateinit var topic: EditText
+    private lateinit var rootRef: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +47,7 @@ class AddStory : AppCompatActivity() {
         val currentDate = SimpleDateFormat("EEE, MMM d, ''yy", Locale.ENGLISH)
                 .format(Calendar.getInstance().time)
 
-        if (storyBody.isNotEmpty()) {
+        if (storyBody.isNotEmpty() && storyTitle.isNotEmpty()) {
             var length = 0.0
             //for each word, assume a reading time of 0.01 minutes (0.6 seconds)
             storyBody.split("[ ]+".toRegex()).forEach { length += 0.01 }
@@ -57,8 +60,8 @@ class AddStory : AppCompatActivity() {
             val story = Story(
                     excerpt = storyBody,
                     title = storyTitle,
-                    length = if (length < 1.0) "<1 minute" else "$length minutes",
-                    category = category,
+                    length = if (length < 1.0) "<1 minute read" else "${length.roundToInt()} minutes read",
+                    category = category + if (topic.isNotEmpty()) "($topic)" else "",
                     uploadedBy = userName,
                     timestamp = currentDate
             )
@@ -67,13 +70,11 @@ class AddStory : AppCompatActivity() {
             //Remove punctuation before using as firebase reference.
             val userEmailForFirebase = userEmail.filter { it != '.' }
             if (userEmail.isNotEmpty()){
-                FirebaseDatabase.getInstance().reference
-                        .child("general")
+                rootRef.child("general")
                         .child(if (story.category == "Poem") "poems" else "stories")
                         .child(story.suid).setValue(story)
 
-                FirebaseDatabase.getInstance().reference
-                        .child("users")
+                rootRef.child("users")
                         .child(userEmailForFirebase)
                         .child(if (story.category == "Poem") "poems" else "stories")
                         .child(story.suid)
@@ -87,6 +88,12 @@ class AddStory : AppCompatActivity() {
                                         .setAction("Action", null).show()
                             }
                         }
+
+                rootRef.child("users")
+                        .child(userEmailForFirebase)
+                        .child("storiesBought")
+                        .child(story.suid)
+                        .setValue("purchased")
             } else {
                 longToast(getString(R.string.error_unidentified_user))
             }
@@ -108,6 +115,8 @@ class AddStory : AppCompatActivity() {
 
         categorySpinner.adapter = categoryAdapter
         categorySpinner.setSelection(0)
+
+        rootRef = FirebaseDatabase.getInstance().reference
     }
 
 }

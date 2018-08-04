@@ -61,5 +61,6 @@
     <string name="price_of_ten">4000 Naira</string>
     <string name="view_stories">View Stories</string>
     <string name="view_poems">View Poems</string>
-    <string name="flutterwave_instructor">Are you a Flutterwave Heroes Instructor and want to test this app with just 100 Naira? (You get One story...)</string>
+    <string name="flutterwave_instructor">Are you a Flutterwave Heroes Instructor and want to test this awesome app with just 150 Naira? Click below (You get One story...)</string>
+    <string name="story_for">story for</string>
 </resources>

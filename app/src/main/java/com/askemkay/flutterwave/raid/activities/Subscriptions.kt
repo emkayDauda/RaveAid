@@ -83,7 +83,7 @@ selected
                     "One" -> {priceTextView.text = getString(R.string.price_of_one)}
                     "Three" -> {priceTextView.text = getString(R.string.price_of_three)}
                     "Five" -> {priceTextView.text = getString(R.string.price_of_five)}
-                    "Ten" -> {priceTextView.text = getString(R.string.price_of_five)}
+                    "Ten" -> {priceTextView.text = getString(R.string.price_of_ten)}
                 }
 
                 price = priceTextView.text.toString()
@@ -129,7 +129,7 @@ selected
 
         flutterWaver.setOnClickListener{
             alert {
-                message = "You will be billed 100 Naira"
+                message = "You will be billed 150 Naira"
                 title = "Confirm"
 
                 positiveButton("OK"){

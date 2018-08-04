@@ -28,8 +28,8 @@ To get a local copy of the project, follow these steps:
     3. Follow the instructions in both cases.
     4. Clean and rebuild project just to be safe.
     
-**Note**: A sample release apk can be found [here on Google Drive](https://docs.google.com/uc?export=download&id=1h4lGuEazZk9cpdIxNI5dL6v7XxYrkKdO)
-or [here on github](https://github.com/emkayDauda/RaveAid/blob/master/app-release.apk)
+**Note**: A sample debug apk can be downloaded from [Google Drive](https://docs.google.com/uc?export=download&id=1gitDbJJryNb3ICep4qTDfBfxdcXB99Ma)
+or [here on github](https://github.com/emkayDauda/RaveAid/blob/master/app-debug.apk)
     
 # Built With
 * [Android Support Library](https://developer.android.com/topic/libraries/support-library/revisions) - Support Library 27
