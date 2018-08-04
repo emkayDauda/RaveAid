@@ -5,6 +5,7 @@
 /.idea/modules.xml
 /.idea/workspace.xml
 .DS_Store
+
 /build
 /captures
 .externalNativeBuild
@@ -59,3 +60,5 @@ fabric.properties
 *.rar
 hs_err_pid*
 app/libs/
+!/build/intermediates/proguard-files/
+
