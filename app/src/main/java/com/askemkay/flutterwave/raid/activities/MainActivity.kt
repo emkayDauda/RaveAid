@@ -225,7 +225,7 @@ RecyclerViewClickListenerInterface{
 
     private fun populateRecyclerView(category: String){
 
-//        storiesList.adapter = null
+        storiesList.adapter = null
         val realQuery = rootRef
                 .child("general")
                 .child(category)
