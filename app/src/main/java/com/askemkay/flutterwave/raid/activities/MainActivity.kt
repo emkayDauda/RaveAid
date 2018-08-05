@@ -18,6 +18,7 @@ import com.askemkay.flutterwave.raid.R
 import com.askemkay.flutterwave.raid.models.RecyclerViewClickListenerInterface
 import com.askemkay.flutterwave.raid.models.Story
 import com.askemkay.flutterwave.raid.models.StoryHolder
+import com.bumptech.glide.Glide
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -278,6 +279,7 @@ RecyclerViewClickListenerInterface{
 
             override fun onDataChanged() {
                 super.onDataChanged()
+                progressBar.visibility = View.GONE
                 realAdapter.notifyDataSetChanged()
             }
 
@@ -303,6 +305,7 @@ RecyclerViewClickListenerInterface{
 
             override fun onDataChanged() {
                 super.onDataChanged()
+                progressBar.visibility = View.GONE
                 realAdapter.notifyDataSetChanged()
             }
 

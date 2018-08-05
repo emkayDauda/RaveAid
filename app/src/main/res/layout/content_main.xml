@@ -11,12 +11,14 @@
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
         android:id="@+id/loadingProgressBar"
-        style="?android:attr/progressBarStyleHorizontal"
+        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:visibility="visible"
         android:indeterminate="true"
+        app:mpb_useIntrinsicPadding="false"
         app:mpb_progressStyle="horizontal"
+        app:mpb_indeterminateTint="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
