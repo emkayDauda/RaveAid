@@ -44,6 +44,10 @@ RecyclerViewClickListenerInterface{
         val sUid = v.findViewById<TextView>(R.id.pushValue).text.toString()
         val sOwner = v.findViewById<TextView>(R.id.uploaded_by).text.toString()
         val email = userEmail.text.toString().filter { it != '.' }
+        var category = v.findViewById<TextView>(R.id.category).text.toString()
+
+        //change value of category to be used as child node in database request
+        category = if (category == "Poem") "poems" else "stories"
 
         /*Check if story has been purchased by user. If not, purchase it...*/
         rootRef.child("users").child(email).child("storiesBought").child(sUid)
@@ -55,14 +59,14 @@ RecyclerViewClickListenerInterface{
                     override fun onDataChange(p0: DataSnapshot) {
                         val exists = p0.getValue(String::class.java)
                         if (exists != null){
-                            showStory(sUid)
+                            showStory(sUid, category)
                         } else{
                             alert {
                                 title = "Make a purchase?"
                                 message = "Do you want to buy this story written by $sOwner?"
 
                                 positiveButton("OK"){
-                                    chargeSubscriptions(email, sUid, true)
+                                    chargeSubscriptions(email, sUid, category, true)
                                 }
 
                                 noButton {}
@@ -73,8 +77,8 @@ RecyclerViewClickListenerInterface{
                 })
     }
 
-    private fun showStory(sUid: String) {
-        rootRef.child("general").child("stories").child(sUid)
+    private fun showStory(sUid: String, category: String) {
+        rootRef.child("general").child(category).child(sUid)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onCancelled(p0: DatabaseError) {
                         toast("")
@@ -95,7 +99,7 @@ RecyclerViewClickListenerInterface{
         }
     }
 
-    fun chargeSubscriptions(email: String, sUid: String, showStory: Boolean = false){
+    fun chargeSubscriptions(email: String, sUid: String, category: String, showStory: Boolean = false){
         val currentSub = preferences.getString(Subscriptions.USER_STORIES_LEFT, "")
 
         if (currentSub.isNotEmpty()) {
@@ -115,7 +119,7 @@ RecyclerViewClickListenerInterface{
                                         .setValue((currentSubValue - 1).toString())
 
                                 //If user has tried to view a story before, show that story after successful charge
-                                if (showStory) showStory(sUid)
+                                if (showStory) showStory(sUid, category)
                                 longToast("Story purchased. You have${currentSubValue - 1} subscriptions left").show()
                             }
                         }
@@ -225,7 +229,7 @@ RecyclerViewClickListenerInterface{
 
     private fun populateRecyclerView(category: String){
 
-        storiesList.adapter = null
+//        storiesList.adapter = null
         val realQuery = rootRef
                 .child("general")
                 .child(category)
