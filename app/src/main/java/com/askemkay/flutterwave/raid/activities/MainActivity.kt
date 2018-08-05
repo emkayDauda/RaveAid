@@ -344,13 +344,13 @@ RecyclerViewClickListenerInterface{
 
         val photoUrl = mAuth.currentUser?.photoUrl
 
-        /*if (photoUrl != null) {
+        if (photoUrl != null) {
             Glide.with(context)
                     .load(photoUrl)
                     .centerCrop()
                     .crossFade()
                     .into(imageView)
-        }*/
+        }
     }
 
     override fun onBackPressed() {
