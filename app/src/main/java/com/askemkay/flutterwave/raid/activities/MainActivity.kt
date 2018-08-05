@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar
 import org.jetbrains.anko.*
 
 
@@ -151,6 +152,7 @@ RecyclerViewClickListenerInterface{
     private lateinit var realAdapter: FirebaseRecyclerAdapter<Story, StoryHolder>
     private lateinit var poemsAdapter: FirebaseRecyclerAdapter<Story, StoryHolder>
     private lateinit var viewManager: RecyclerView.LayoutManager
+    private lateinit var progressBar: MaterialProgressBar
     private lateinit var preferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -198,6 +200,7 @@ RecyclerViewClickListenerInterface{
 
         mGoogleApiClient.connect()
 
+        progressBar = findViewById(R.id.loadingProgressBar)
         storiesList = findViewById<RecyclerView>(R.id.storiesList).apply {
             setHasFixedSize(true)
 

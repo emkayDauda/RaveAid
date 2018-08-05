@@ -125,7 +125,7 @@ class AddStory : AppCompatActivity() {
         categorySpinner.gravity = Gravity.CENTER
 
         val categoryAdapter = ArrayAdapter.createFromResource(this@AddStory,
-                R.array.categories, android.R.layout.simple_spinner_item)
+                R.array.categories, android.R.layout.simple_spinner_dropdown_item)
 
         categorySpinner.adapter = categoryAdapter
         categorySpinner.setSelection(0)
