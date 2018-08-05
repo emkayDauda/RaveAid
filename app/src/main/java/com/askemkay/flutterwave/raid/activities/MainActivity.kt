@@ -203,6 +203,20 @@ RecyclerViewClickListenerInterface{
 //            adapter = realAdapter
         }
 
+        storiesList.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                //Make Fab transparent when recycler view is at the last item
+                if(!recyclerView.canScrollVertically(1)){
+                    fab.alpha = 0.5f
+                }
+                else fab.alpha =1.0f
+            }
+        })
+
+
+
         val headerView = findViewById<NavigationView>(R.id.nav_view).getHeaderView(0)
         userDisplayName = headerView.findViewById(R.id.user_display_name_tv)
         userEmail = headerView.findViewById(R.id.user_email_tv)
@@ -211,7 +225,7 @@ RecyclerViewClickListenerInterface{
 
     private fun populateRecyclerView(category: String){
 
-        storiesList.adapter = null
+//        storiesList.adapter = null
         val realQuery = rootRef
                 .child("general")
                 .child(category)
