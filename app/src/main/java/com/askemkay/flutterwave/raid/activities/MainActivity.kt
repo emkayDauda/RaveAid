@@ -45,6 +45,7 @@ RecyclerViewClickListenerInterface{
         val sOwner = v.findViewById<TextView>(R.id.uploaded_by).text.toString()
         val email = userEmail.text.toString().filter { it != '.' }
         var category = v.findViewById<TextView>(R.id.category).text.toString()
+        val sTitle = v.findViewById<TextView>(R.id.title).text.toString()
 
         //change value of category to be used as child node in database request
         category = if (category == "Poem") "poems" else "stories"
@@ -63,7 +64,7 @@ RecyclerViewClickListenerInterface{
                         } else{
                             alert {
                                 title = "Make a purchase?"
-                                message = "Do you want to buy this story written by $sOwner?"
+                                message = "Do you want to purchase \"$sTitle\" by $sOwner?"
 
                                 positiveButton("OK"){
                                     chargeSubscriptions(email, sUid, category, true)
