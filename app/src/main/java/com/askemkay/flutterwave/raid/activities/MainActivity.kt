@@ -332,12 +332,14 @@ RecyclerViewClickListenerInterface{
             override fun onDataChanged() {
                 super.onDataChanged()
                 progressBar.visibility = View.GONE
-
+                notifyDataSetChanged()
             }
 
         }
+        adapter.startListening()
 
         storiesList.adapter = adapter
+
     }
 
     private fun bindStoryToRecyclerView(holder: StoryHolder, model: Story) {
@@ -404,6 +406,7 @@ RecyclerViewClickListenerInterface{
         when (item.itemId) {
             R.id.view_stories -> {
                 storiesList.adapter = realAdapter
+
                 return true
             }
 
@@ -424,11 +427,12 @@ RecyclerViewClickListenerInterface{
                 longToast("In Progress, not yet implemented...").show()
             }
             R.id.view_accounts -> {
-                progressBar.visibility = View.GONE
+                progressBar.visibility = View.VISIBLE
                 populateRecyclerViewWithUserStories(userEmailForFirebase, "stories")
             }
 
             R.id.my_poems -> {
+                progressBar.visibility = View.VISIBLE
                 populateRecyclerViewWithUserStories(userEmailForFirebase, "poems")
             }
 
