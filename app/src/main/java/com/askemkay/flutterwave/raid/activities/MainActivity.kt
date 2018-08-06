@@ -155,6 +155,7 @@ RecyclerViewClickListenerInterface{
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var progressBar: MaterialProgressBar
     private lateinit var preferences: SharedPreferences
+    private lateinit var userEmailForFirebase: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -266,13 +267,7 @@ RecyclerViewClickListenerInterface{
             }
 
             override fun onBindViewHolder(holder: StoryHolder, position: Int, model: Story) {
-                holder.category.text = model.category
-                holder.excerpt.text = model.excerpt
-                holder.length.text = model.length
-                holder.timeStamp.text = model.timestamp
-                holder.uploadedBy.text = model.uploadedBy
-                holder.pushValue.text = model.suid
-                holder.title.text = model.title
+                bindStoryToRecyclerView(holder, model)
 
                 Log.e("Bind", "${model.category}: ${model.suid}")
             }
@@ -292,13 +287,7 @@ RecyclerViewClickListenerInterface{
             }
 
             override fun onBindViewHolder(holder: StoryHolder, position: Int, model: Story) {
-                holder.category.text = model.category
-                holder.excerpt.text = model.excerpt
-                holder.length.text = model.length
-                holder.timeStamp.text = model.timestamp
-                holder.uploadedBy.text = model.uploadedBy
-                holder.pushValue.text = model.suid
-                holder.title.text = model.title
+                bindStoryToRecyclerView(holder, model)
 
                 Log.e("Bind", "${model.category}: ${model.suid}")
             }
@@ -319,6 +308,48 @@ RecyclerViewClickListenerInterface{
 
     }
 
+    private fun populateRecyclerViewWithUserStories(email: String, category: String){
+        val query = rootRef.child("users")
+                .child(email)
+                .child(category)
+                .orderByKey()
+
+        val queryOptions = FirebaseRecyclerOptions.Builder<Story>()
+                .setQuery(query, Story::class.java)
+                .build()
+
+        val adapter = object: FirebaseRecyclerAdapter<Story, StoryHolder>(queryOptions){
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoryHolder {
+                val view = LayoutInflater.from(context).inflate(R.layout.story_layout, parent, false)
+
+                return  StoryHolder(view, this@MainActivity)
+            }
+
+            override fun onBindViewHolder(holder: StoryHolder, position: Int, model: Story) {
+                bindStoryToRecyclerView(holder, model)
+            }
+
+            override fun onDataChanged() {
+                super.onDataChanged()
+                progressBar.visibility = View.GONE
+
+            }
+
+        }
+
+        storiesList.adapter = adapter
+    }
+
+    private fun bindStoryToRecyclerView(holder: StoryHolder, model: Story) {
+        holder.category.text = model.category
+        holder.excerpt.text = model.excerpt
+        holder.length.text = model.length
+        holder.timeStamp.text = model.timestamp
+        holder.uploadedBy.text = model.uploadedBy
+        holder.pushValue.text = model.suid
+        holder.title.text = model.title
+    }
+
     override fun onStart() {
         super.onStart()
         realAdapter.startListening()
@@ -336,6 +367,8 @@ RecyclerViewClickListenerInterface{
         val userMail = mAuth.currentUser?.email
         userDisplayName.text = userName ?: context.getString(R.string.unidentified_user)
         userEmail.text = userMail ?: context.getString(R.string.unidentified_email)
+
+        userEmailForFirebase = userMail?.filter { it != '.' } ?: ""
 
         preferences.edit().putString(USER_NAME, mAuth.currentUser?.displayName).apply()
         preferences.edit().putString(USER_EMAIL, mAuth.currentUser?.email).apply()
@@ -387,10 +420,16 @@ RecyclerViewClickListenerInterface{
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.add_account -> {
-                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                /*startActivity(Intent(this@MainActivity, LoginActivity::class.java))*/
+                longToast("In Progress, not yet implemented...").show()
             }
             R.id.view_accounts -> {
+                progressBar.visibility = View.GONE
+                populateRecyclerViewWithUserStories(userEmailForFirebase, "stories")
+            }
 
+            R.id.my_poems -> {
+                populateRecyclerViewWithUserStories(userEmailForFirebase, "poems")
             }
 
             R.id.subscriptions -> {

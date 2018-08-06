@@ -66,4 +66,7 @@
     <string name="instructor_test">Instructor Test</string>
     <string name="topic_optional">Topic (Optional)</string>
     <string name="a_catchy_title">a catchy title</string>
+    <string name="my_stories">My Stories</string>
+    <string name="add_bank">Add Bank</string>
+    <string name="my_poems">My Poems</string>
 </resources>

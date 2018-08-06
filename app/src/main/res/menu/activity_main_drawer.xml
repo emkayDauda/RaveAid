@@ -6,15 +6,21 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/add_account"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="@string/add_account" />
+            android:icon="@drawable/ic_add"
+            android:title="@string/add_bank" />
         <item
             android:id="@+id/view_accounts"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/view_accounts" />
+            android:icon="@drawable/ic_library"
+            android:title="@string/my_stories" />
+
+        <item
+            android:id="@+id/my_poems"
+            android:icon="@drawable/ic_library"
+            android:title="@string/my_poems" />
+
         <item
             android:id="@+id/subscriptions"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_money"
             android:title="@string/subscribe"/>
     </group>
 
@@ -22,7 +28,7 @@
         <menu>
             <item
                 android:id="@+id/sign_out"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/ic_out"
                 android:title="@string/sign_out" />
         </menu>
     </item>

@@ -63,3 +63,9 @@ app/libs/
 
 
 /gradle.properties
+/firebase.json
+/database.rules.json
+/app/google-services.json
+/build/
+/functions/
+/.firebaserc

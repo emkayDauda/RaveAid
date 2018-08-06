@@ -114,7 +114,14 @@
     @android.support.annotation.Keep <init>(...);
 }
 
-
 -keep interface org.parceler.Parcel
 -keep @org.parceler.Parcel class * { *; }
 -keep class **$$Parcelable { *; }
+
+#Exclude Rave SDK
+#-keep public class com.flutterwave.raveandroid.** {
+#    public protected *;
+#}
+
+-keepclasseswithmembers public class com.flutterwave.raveandroid.** { *; }
+-dontwarn com.flutterwave.raveandroid.card.CardFragment
