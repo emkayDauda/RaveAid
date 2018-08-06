@@ -28,7 +28,7 @@ To get a local copy of the project, follow these steps:
     3. Follow the instructions in both cases.
     4. Clean and rebuild project just to be safe.
     
-**Note**: A sample app can be downloaded from [Google Drive](https://docs.google.com/uc?export=download&id=1gitDbJJryNb3ICep4qTDfBfxdcXB99Ma)
+**Note**: A sample app can be downloaded from [Google Drive](https://docs.google.com/uc?export=download&id=1pE4sySipN8lXsEdBGEUp_id4oJ_ysOU4)
 or [here on github](https://github.com/emkayDauda/RaveAid/blob/master/app-debug.apk)
     
 # Built With
