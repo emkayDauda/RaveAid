@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
+import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.EditText
@@ -16,6 +17,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
 import kotlinx.android.synthetic.main.activity_add_story.*
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import java.text.SimpleDateFormat
@@ -39,6 +41,8 @@ class AddStory : AppCompatActivity() {
         initComponents()
         fab.setOnClickListener { view -> addStory(view) }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+
     }
 
     private fun addStory(view: View) {
@@ -102,7 +106,7 @@ class AddStory : AppCompatActivity() {
                         .child(userEmailForFirebase)
                         .child("storiesBought")
                         .child(story.suid)
-                        .setValue("purchased")
+                        .setValue("purcreturn super.getActionBar()hased")
             } else {
                 longToast(getString(R.string.error_unidentified_user))
             }
@@ -132,5 +136,31 @@ class AddStory : AppCompatActivity() {
 
         rootRef = FirebaseDatabase.getInstance().reference
     }
+
+    override fun onBackPressed() {
+        if (storyText.text.toString().isNotEmpty() || title.text.toString().isNotEmpty()){
+            alert {
+                title = "Leave?"
+                message = "You have not posted your story"
+                positiveButton("Leave"){
+                    storyText.setText("")
+                    this@AddStory.title.setText("")
+                    super.onBackPressed()
+                }
+                negativeButton("Stay"){}
+            }.show()
+        } else super.onBackPressed()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when(item?.itemId){
+            android.R.id.home ->{
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
 
 }

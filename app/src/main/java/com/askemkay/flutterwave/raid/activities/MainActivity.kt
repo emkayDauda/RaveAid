@@ -406,7 +406,6 @@ RecyclerViewClickListenerInterface{
         when (item.itemId) {
             R.id.view_stories -> {
                 storiesList.adapter = realAdapter
-
                 return true
             }
 
